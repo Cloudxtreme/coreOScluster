@@ -1,0 +1,12 @@
+dhcp:
+  image: housek/cc-dhcp
+  net: host
+tftp:
+  image: housek/cc-tftp
+  ports:
+  - "69:69/tcp"
+  - "69:69/udp"
+nginx:
+  image: housek/cc-nginx
+  ports:
+  - "80:80"
