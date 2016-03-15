@@ -10,3 +10,10 @@ nginx:
   image: housek/cc-nginx
   ports:
   - "80:80"
+registrycache:
+  image: registry
+  environment:
+    REGISTRY_STORAGE_FILESYSTEM_ROOTDIRECTORY: /regcache
+    REGISTRY_PROXY_REMOTEURL: https://registry-1.docker.io
+  ports:
+  - "5000:5000"
