@@ -13,10 +13,10 @@ coreos:
 
     - name: docker.service
       drop-ins:
-      - name: "50-config-repocache.conf"
+      - name: "50-registry-mirror.conf"
         content: |
-          [service]
-          Environment=DOCKER_OPTS='--registry-mirror="http://192.168.137.2:5000"'
+          [Service]
+          Environment="DOCKER_OPTS=--registry-mirror=http://192.168.137.2:5000"
       command: start
 
     - name: boinc.service
