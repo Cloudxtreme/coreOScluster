@@ -16,7 +16,7 @@ coreos:
       - name: "50-registry-mirror.conf"
         content: |
           [Service]
-          Environment="DOCKER_OPTS=--registry-mirror=http://192.168.137.2:5000"
+          Environment="DOCKER_OPTS=--registry-mirror=http://172.19.2.2:5000"
       command: start
 
     - name: boinc.service
@@ -48,7 +48,7 @@ coreos:
         RemainAfterExit=yes
         Type=oneshot
   etcd2:
-    discovery: https://discovery.etcd.io/dbfbaa0d21dc365eb890642e7f68824e
+    discovery: https://discovery.etcd.io/de8a5b81a0941914b718705c7243e1f7
     # multi-region and multi-cloud deployments need to use $public_ipv4
     advertise-client-urls: http://172.17.0.1:2379,http://172.17.0.1:4001
     initial-advertise-peer-urls: http://172.17.0.1:2380
