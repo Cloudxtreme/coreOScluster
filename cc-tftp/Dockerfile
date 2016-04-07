@@ -1,14 +1,15 @@
 FROM fedora
-RUN dnf update -y
-RUN dnf install -y tftp-server syslinux wget
 
-RUN	cd /var/lib/tftpboot	&&\
-	mkdir pxelinux.cfg	&&\
-	wget http://alpha.release.core-os.net/amd64-usr/current/coreos_production_pxe.vmlinuz	&&\
+MAINTAINER Kobe Housen
+
+RUN dnf update -y
+RUN dnf install -y tftp-server wget
+
+RUN	cd /var/lib/tftpboot										&&\
+	wget http://alpha.release.core-os.net/amd64-usr/current/coreos_production_pxe.vmlinuz		&&\
 	wget http://alpha.release.core-os.net/amd64-usr/current/coreos_production_pxe_image.cpio.gz	&&\
-	cp /usr/share/syslinux/pxelinux.0 pxelinux.0	&&\
-	cp /usr/share/syslinux/ldlinux.c32 ldlinux.c32	&&\
-	dnf remove -y wget syslinux
-	
-COPY default /var/lib/tftpboot/pxelinux.cfg/default
+	dnf remove -y wget
+
 CMD /usr/sbin/in.tftpd --foreground --verbose --secure /var/lib/tftpboot
+#This line in last because the grub2.efi file is generated each time you run the supplied build script.
+COPY grub2.efi /var/lib/tftpboot/
