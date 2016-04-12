@@ -1,0 +1,17 @@
+FROM fedora
+
+MAINTAINER Kobe Housen
+
+RUN dnf update -y
+RUN dnf install -y git gcc binutils make perl zlib-devel binutils-devel
+
+COPY bootScript.ipxe /
+
+RUN	git clone git://git.ipxe.org/ipxe.git			&&\
+	cd ipxe/src						&&\
+	make bin-x86_64-efi/ipxe.efi EMBED=/bootScript.ipxe	&&\
+	mkdir /output
+
+VOLUME /output
+
+CMD cp /ipxe/src/bin-x86_64-efi/ipxe.efi /output/boot_ipxe.efi

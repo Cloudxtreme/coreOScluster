@@ -55,4 +55,4 @@ coreos:
     # legacy ports can be omitted if your application doesn't depend on them
     listen-client-urls: http://0.0.0.0:2379,http://0.0.0.0:4001
     listen-peer-urls: http://172.17.0.1:2380
-    discovery: <discoveryTokenUrlHere>
+    discovery: https://discovery.etcd.io/dda7384265dd1a4b3d77c41556742c47

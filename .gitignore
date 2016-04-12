@@ -1,1 +1,2 @@
-/cc-tftp/grub2.efi
+/cc-nginx/pxe-cloud-config.yml
+/cc-bib/output/*
