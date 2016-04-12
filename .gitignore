@@ -1,2 +1,2 @@
 /cc-nginx/pxe-cloud-config.yml
-/cc-bib/output/*
+/cc-bib/output/?*
