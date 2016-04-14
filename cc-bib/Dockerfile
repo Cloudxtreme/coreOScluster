@@ -14,4 +14,4 @@ RUN	git clone git://git.ipxe.org/ipxe.git			&&\
 
 VOLUME /output
 
-CMD cp /ipxe/src/bin-x86_64-efi/ipxe.efi /output/boot_ipxe.efi
+CMD cp /ipxe/src/bin-x86_64-efi/ipxe.efi /output/ipxe.efi

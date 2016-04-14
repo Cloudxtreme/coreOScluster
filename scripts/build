@@ -1,0 +1,85 @@
+#!/bin/bash
+
+logdir=logs
+
+#Exit when simple command fails
+set -e
+
+mkdir -p /tmp/cc
+
+[ -e /tmp/cc/dhcpstate ] || touch /tmp/cc/dhcpstate
+[ -e /tmp/cc/tftpstate ] || touch /tmp/cc/tftpstate
+[ -e /tmp/cc/nginxstate ] || touch /tmp/cc/nginxstate
+
+echo "Not started" > /tmp/cc/dhcpstate
+echo "Not started" > /tmp/cc/tftpstate
+echo "Not started" > /tmp/cc/nginxstate
+
+function log {
+clear
+echo "dhcp:	`cat /tmp/cc/dhcpstate`"
+echo "tftp:	`cat /tmp/cc/tftpstate`"
+echo "nginx:	`cat /tmp/cc/nginxstate`"
+}
+
+
+function build_tftp {
+#build ipxe bootfile
+	echo "building ipxe boot image..." > /tmp/cc/tftpstate && log
+	scripts/buildBootImage.sh >> $logdir/tftpbuild.log
+#build tftp server docker image
+	echo "building tftp docker image..." > /tmp/cc/tftpstate && log
+	docker build -t housek/cc-tftp cc-tftp >> $logdir/tftpbuild.log
+	echo "finished" > /tmp/cc/tftpstate && log
+}
+
+
+
+function build_nginx {
+#update etcd2 discovery token
+	echo "fetching new discovery token..." > /tmp/cc/nginxstate && log
+	cp cc-nginx/pxe-cloud-config.yml.template cc-nginx/pxe-cloud-config.yml
+	discoveryUrl=`scripts/newDiscoveryToken.sh`
+	sed -i "s,<discoveryTokenUrlHere>,$discoveryUrl,g" cc-nginx/pxe-cloud-config.yml
+#build nginx server docker image
+	echo "building nginx docker image..." > /tmp/cc/nginxstate && log
+	docker build -t housek/cc-nginx cc-nginx >> $logdir/nginxbuild.log
+	echo "finished" > /tmp/cc/nginxstate && log
+}
+
+
+function build_dhcp {
+#build nginx server docker image
+	echo "building dhcp docker image..." > /tmp/cc/dhcpstate && log
+	docker build -t housek/cc-dhcp cc-dhcp >> $logdir/dhcpbuild.log
+	echo "finished" > /tmp/cc/dhcpstate && log
+}
+
+function build_base {
+#build base docker image
+	echo "building base image..."
+	docker build -t housek/cc-base cc-base >> $logdir/basebuild.log
+}
+
+echo "Building all Docker images (This could take a long time) please wait..."
+# first build a fedora docker image and update it
+# this will cache a intermediate container with te command "RUN dnf update -y" to avoid doing this step 3 redundant times (in dhcp, tftp and nginx).
+clear
+build_base
+build_tftp &
+PIDs+=$!
+build_nginx &
+PIDs+=$!
+build_dhcp &
+PIDs+=$!
+
+for p in $PIDs; do
+	if wait $p; then
+		echo "$p succeeded"
+	else
+		echo "process $p exited with code $!"
+		exit $!
+	fi
+done
+
+exit 0

@@ -27,6 +27,8 @@ coreos:
         After=docker.service
         [Service]
         TimeoutStartSec=0
+        Restart=always
+        RestartSec=5
         ExecStartPre=-/usr/bin/docker kill boinc
         ExecStartPre=-/usr/bin/docker rm boinc
         ExecStartPre=/usr/bin/docker pull laurentmalvert/docker-boinc

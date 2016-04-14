@@ -1,17 +1,7 @@
 #!ipxe
-menu
-item tftp	tftp server
-item inet	internet source (coreOS website)
-choose --timeout 5000 --default tftp ba
-dhcp
-goto $(ba)
+:dhcp
+dhcp || goto dhcp
 
-:inet
-kernel http://alpha.release.core-os.net/amd64-usr/current/coreos_production_pxe.vmlinuz initrd=coreos_production_pxe_image.cpio.gz cloud-config-url=http://172.19.2.2/pxe-cloud-config.yml
-initrd http://alpha.release.core-os.net/amd64-usr/current/coreos_production_pxe_image.cpio.gz
-boot
-
-:tftp
-kernel coreos_production_pxe.vmlinuz initrd=coreos_production_pxe_image.cpio.gz cloud-config-url=http://172.19.2.2/pxe-cloud-config.yml
+kernel coreos_production_pxe.vmlinuz coreos.autologin initrd=coreos_production_pxe_image.cpio.gz cloud-config-url=http://172.19.2.2/pxe-cloud-config.yml
 initrd coreos_production_pxe_image.cpio.gz
 boot
