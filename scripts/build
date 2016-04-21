@@ -15,6 +15,12 @@ echo "Not started" > /tmp/cc/dhcpstate
 echo "Not started" > /tmp/cc/tftpstate
 echo "Not started" > /tmp/cc/nginxstate
 
+function cleanup {
+rm /tmp/cc/dhcpstate
+rm /tmp/cc/tftpstate
+rm /tmp/cc/nginxstate
+}
+
 function log {
 clear
 echo "dhcp:	`cat /tmp/cc/dhcpstate`"
@@ -24,6 +30,7 @@ echo "nginx:	`cat /tmp/cc/nginxstate`"
 
 
 function build_tftp {
+	echo "\n\n\n#################################\nNew build `date`" >> $logdir/tftpbuild.log
 #build ipxe bootfile
 	echo "building ipxe boot image..." > /tmp/cc/tftpstate && log
 	scripts/buildBootImage.sh >> $logdir/tftpbuild.log
@@ -36,6 +43,7 @@ function build_tftp {
 
 
 function build_nginx {
+	echo "\n\n\n#################################\nNew build `date`" >> $logdir/nginxbuild.log
 #update etcd2 discovery token
 	echo "fetching new discovery token..." > /tmp/cc/nginxstate && log
 	cp cc-nginx/pxe-cloud-config.yml.template cc-nginx/pxe-cloud-config.yml
@@ -49,6 +57,7 @@ function build_nginx {
 
 
 function build_dhcp {
+	echo "\n\n\n#################################\nNew build `date`" >> $logdir/dhcpbuild.log
 #build nginx server docker image
 	echo "building dhcp docker image..." > /tmp/cc/dhcpstate && log
 	docker build -t housek/cc-dhcp cc-dhcp >> $logdir/dhcpbuild.log
@@ -56,6 +65,7 @@ function build_dhcp {
 }
 
 function build_base {
+	echo "\n\n\n#################################\nNew build `date`" >> $logdir/basebuild.log
 #build base docker image
 	echo "building base image..."
 	docker build -t housek/cc-base cc-base >> $logdir/basebuild.log
@@ -67,19 +77,20 @@ echo "Building all Docker images (This could take a long time) please wait..."
 clear
 build_base
 build_tftp &
-PIDs+=$!
+PIDs+=($!)
 build_nginx &
-PIDs+=$!
+PIDs+=($!)
 build_dhcp &
-PIDs+=$!
+PIDs+=($!)
 
-for p in $PIDs; do
+for p in ${PIDs[@]} ; do
 	if wait $p; then
-		echo "$p succeeded"
+		true
 	else
-		echo "process $p exited with code $!"
-		exit $!
+		echo "process $p exited with non zero exitcode $!"
+		exit
 	fi
 done
-
-exit 0
+wait
+cleanup
+exit

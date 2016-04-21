@@ -9,9 +9,6 @@ COPY bootScript.ipxe /
 
 RUN	git clone git://git.ipxe.org/ipxe.git			&&\
 	cd ipxe/src						&&\
-	make bin-x86_64-efi/ipxe.efi EMBED=/bootScript.ipxe	&&\
-	mkdir /output
+	make bin-x86_64-efi/ipxe.efi EMBED=/bootScript.ipxe
 
-VOLUME /output
-
-CMD cp /ipxe/src/bin-x86_64-efi/ipxe.efi /output/ipxe.efi
+CMD /bin/true

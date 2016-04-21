@@ -12,15 +12,16 @@ RUN curl -O https://coreos.com/security/image-signing-key/CoreOS_Image_Signing_K
     gpg --import --keyid-format LONG CoreOS_Image_Signing_Key.asc
 
 #download and verify coreOS
-RUN cd /usr/share/nginx/html                                                                           &&\
-    curl -O http://alpha.release.core-os.net/amd64-usr/current/coreos_production_pxe.vmlinuz           &&\
-    curl -O http://alpha.release.core-os.net/amd64-usr/current/coreos_production_pxe_image.cpio.gz     &&\
-    curl -O http://alpha.release.core-os.net/amd64-usr/current/coreos_production_pxe.vmlinuz.sig       &&\
-    curl -O http://alpha.release.core-os.net/amd64-usr/current/coreos_production_pxe_image.cpio.gz.sig &&\
-    gpg --verify --yes coreos_production_pxe.vmlinuz.sig                                               &&\
-    gpg --verify --yes coreos_production_pxe_image.cpio.gz.sig                                         &&\
-    rm coreos_production_pxe.vmlinuz.sig                                                               &&\
-    rm coreos_production_pxe_image.cpio.gz.sig
+#RUN cd /usr/share/nginx/html                                                                           &&\
+#    curl -O http://alpha.release.core-os.net/amd64-usr/current/coreos_production_pxe.vmlinuz            &\
+#    curl -O http://alpha.release.core-os.net/amd64-usr/current/coreos_production_pxe_image.cpio.gz      &\
+#    curl -O http://alpha.release.core-os.net/amd64-usr/current/coreos_production_pxe.vmlinuz.sig        &\
+#    curl -O http://alpha.release.core-os.net/amd64-usr/current/coreos_production_pxe_image.cpio.gz.sig  &\
+#    wait                                                                                               &&\
+#    gpg --verify --yes coreos_production_pxe.vmlinuz.sig                                               &&\
+#    gpg --verify --yes coreos_production_pxe_image.cpio.gz.sig                                         &&\
+#    rm coreos_production_pxe.vmlinuz.sig                                                               &&\
+#    rm coreos_production_pxe_image.cpio.gz.sig
 
 RUN dnf remove -y gpg curl
 
