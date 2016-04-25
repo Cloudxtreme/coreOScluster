@@ -64,18 +64,10 @@ function build_dhcp {
 	echo "finished" > /tmp/cc/dhcpstate && log
 }
 
-function build_base {
-	echo "\n\n\n#################################\nNew build `date`" >> $logdir/basebuild.log
-#build base docker image
-	echo "building base image..."
-	docker build -t housek/cc-base cc-base >> $logdir/basebuild.log
-}
 
 echo "Building all Docker images (This could take a long time) please wait..."
-# first build a fedora docker image and update it
-# this will cache a intermediate container with te command "RUN dnf update -y" to avoid doing this step 3 redundant times (in dhcp, tftp and nginx).
+
 clear
-build_base
 build_tftp &
 PIDs+=($!)
 build_nginx &

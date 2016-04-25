@@ -2,7 +2,6 @@ FROM fedora
 
 MAINTAINER Kobe Housen
 
-RUN dnf update -y
 RUN dnf install -y git gcc binutils make perl zlib-devel binutils-devel
 
 COPY bootScript.ipxe /

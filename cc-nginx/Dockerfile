@@ -2,7 +2,6 @@ FROM fedora
 
 MAINTAINER Kobe Housen
 
-RUN	dnf update -y
 RUN	dnf install -y nginx gpg curl
 
 
